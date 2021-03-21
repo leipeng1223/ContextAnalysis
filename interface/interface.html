@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<style>
+  svg {
+    font: sans-serif;
+  }
+
+  .svg_space {
+  }
+
+  .svg_cluster {
+  }
+
+  .svg_timeline {
+  }
+
+  .svg_stack {
+    background-color: aliceblue;
+  }
+
+  .svg_histogram {
+  }
+
+  text {
+    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+    cursor: move;
+  }
+
+  #panel {
+    width: 250px;
+    padding: 20px;
+    font-size: 20px;
+  }
+
+  #lower {
+    display: flex;
+  }
+
+  #Interface {
+    display: flex;
+  }
+
+  #Control_Left {
+    background-color: rgb(180, 220, 255);
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+
+  /* background 是灰色背景线条 */
+  .background path {
+    fill: none;
+    stroke: #ddd;
+    shape-rendering: crispEdges;
+  }
+
+  .brush .extent {
+    fill-opacity: 0.3;
+    stroke: #fff;
+    shape-rendering: crispEdges;
+  }
+
+  .axis line,
+  .axis path {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+
+  div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 100px;
+    height: 40px;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+  }
+</style>
+
+
+<body>
+  <!-- 请使用v5版本d3.js -->
+  <script src="//d3js.org/d3.v5.min.js"></script>
+
+  <div id="Interface">
+
+    <div id="Control_Left"></div>
+
+    <div id="Main_Right">
+      <!-- Stack -->
+      <div id="Div_stack"></div>      
+      <!-- Timeline -->
+      <div id="Div_timeline"></div>
+      <!-- Legend -->
+      <div id="Div_legend"></div>
+      <!-- Parallel -->
+      <div id="Div_parallel"></div>
+      <!-- 下方视图 -->
+      <div id="lower">
+        <div id="Div_clusters"></div>
+        <div id="Div_space"></div>
+        <div id="Div_histogram"></div>
+      </div>
+    </div>
+
+  </div>
+  <!-- 画legend的包 -->
+  <script type="text/javascript" src="d3_legend.js"></script>
+  <!-- 代码块(1)，包含与d3_data.csv相关的代码 -->
+  <script type="text/javascript" src="d3_read_data.js"></script>
+  <!-- 代码块(2)，包含与绑定数据无关的代码 -->
+  <script type="text/javascript" src="d3_basic_settings.js"></script>
+  <!-- 代码块(3)，包含与timeline相关的代码 -->
+  <script type="text/javascript" src="d3_timeline.js"></script>
+
+
+  
+</body>
+
+</html>
