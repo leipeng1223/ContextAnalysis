@@ -126,7 +126,7 @@ function Initialize(dataOption) {
                 //   })
                 // )
                 .domain([0, 1])
-                .range([0.8*height_parallel, 0])
+                .range([0.8 * height_parallel, 0])
         });
 
         // 画默认全cluster视图
@@ -142,9 +142,9 @@ function Initialize(dataOption) {
             1033];
 
         var sample = data
-        .filter(function (d) {
-            return sample_id.includes(parseInt(d.Pass_ID))
-        })
+            .filter(function (d) {
+                return sample_id.includes(parseInt(d.Pass_ID))
+            })
 
         var cluster_color = d3.scaleOrdinal()
             .domain(['0', '1', '2', '3', '4', '5'])
@@ -244,8 +244,8 @@ function Initialize(dataOption) {
         // 显示纵轴特征名称
         Ys.append("text")
             .attr('class', 'removable y_text')
-            .attr("x", -0.02*width_parallel)
-            .attr("y", -0.03*height_parallel)
+            .attr("x", -0.02 * width_parallel)
+            .attr("y", -0.03 * height_parallel)
             .text(function (d) {
                 var l = d.split(' ');
                 if (l.length > 4) {
@@ -259,7 +259,7 @@ function Initialize(dataOption) {
                 tip
                     .html(d)
                     .style("left", d3.event.pageX - 110 + "px")
-                    .style("top", d3.event.pageY - 90 + "px");
+                    .style("top", d3.event.pageY -70 + "px");
             })
             .on("mouseout", function () {
                 tip.transition().duration(500).style("opacity", 0);
@@ -273,7 +273,7 @@ function Initialize(dataOption) {
                 //console.log(d)
                 d3.select(this).call(
                     (y_parallel[d].brush = d3.brushY()
-                        .extent([[-40, 0], [40, height_parallel - margin_parallel.top - margin_parallel.bottom]])
+                        .extent([[-0.015 * width_parallel, 0], [0.015 * width_parallel, height_parallel - margin_parallel.top - margin_parallel.bottom]])
                         .on('end', brushed_parallel)
                     ))
             })

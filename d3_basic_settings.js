@@ -159,7 +159,7 @@ var div = d3
 //**********************Clusters**********************
 var size_clusters = parseFloat(d3.select('#Div_clusters').style('width').slice(0, -2));; // Cluster画布宽, 可调参数, 其余参数自动计算
 
-var margin_clusters = { top: 0.03 * size_clusters, right: 0.04 * size_clusters, bottom: 0.03 * size_clusters, left: 0.04 * size_clusters },
+var margin_clusters = { top: 0.03 * size_clusters, right: 0.05 * size_clusters, bottom: 0.03 * size_clusters, left: 0.05 * size_clusters },
     width_clusters = size_clusters - margin_clusters.left - margin_clusters.right,
     height_clusters = width_clusters / 9 // 默认cluster长宽 7:1
 
