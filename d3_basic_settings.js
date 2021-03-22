@@ -2,12 +2,13 @@ id = []; // 全局变量id，用来筛选数据
 pass = []; // 全局变量pass，用来储存筛选出的数据
 
 //**********************Control Panel**********************
-var panel = d3.select("#Control_Left").append('div').attr('id', 'panel')
-
-panel.append('svg').attr('height',50)
+var panel = d3.select("#Div_menu").append('div').attr('id', 'panel')
 
 // data选择框
-panel.append('div').append('text').text('Select the dataset you want to use:')
+panel.append('div')
+    .append('text')
+    .text('Select the dataset you want to use:')
+
 var dataset = ["Team Right", "Team Left", 'Changed']
 var dropdownButton_data = panel.append('select').attr('class', 'select')
 dropdownButton_data
@@ -16,7 +17,7 @@ dropdownButton_data
     .enter()
     .append('option')
     .text(function (d) { return d; }) // text showed in the menu
-    .style('font-size','20px')
+    .style('font-size', '20px')
     .attr("value", function (d) { return d; })
 
 function changeData(myOptions) {
@@ -30,10 +31,12 @@ dropdownButton_data.on("change", function (d) {
     changeData(selectedOption)
 })
 
-panel.append('svg').attr('height',50)
-
 // parallel选择框
-panel.append('div').append('text').text('Select the cluster you want to show:')
+panel.append('div')
+    .attr('class', 'select_text')
+    .append('text')
+    .text('Select the cluster you want to show:')
+
 var c = ["All", "k0", "k1", "k2", "k3", "k4", "k5", "Clear"]
 var dropdownButton_cluster = panel.append('select').attr('class', 'select')
 dropdownButton_cluster
@@ -42,7 +45,7 @@ dropdownButton_cluster
     .enter()
     .append('option')
     .text(function (d) { return d; }) // text showed in the menu
-    .style('font-size','20px')
+    .style('font-size', '20px')
     .attr("value", function (d) { return d; })
 
 function updateParallel(myOptions) {
@@ -86,15 +89,21 @@ dropdownButton_cluster.on("change", function (d) {
 
 
 //**********************Stack**********************
+
+
+var width_stack = parseFloat(d3.select('#Div_stack').style('width').slice(0, -2));
+var height_stack = parseFloat(d3.select('#Div_stack').style('height').slice(0, -2)) / 2;
+var margin_stack = { top: 0.01 * height_stack, right: 0.01 * width_stack, bottom: 0.01 * height_stack, left: 0.01 * width_stack };
+
+console.log(height_stack)
+
+
 var svg_stack = d3.select("#Div_stack")
     .append("svg")
     .attr('class', 'svg_stack')
-    .attr("width", 2400)
-    .attr("height", 150)
+    .attr("width", width_stack)
+    .attr("height", height_stack * 2)
 
-var margin_stack = { top: 10, right: 0, bottom: 75, left: 20 },
-    width_stack = 2400 - margin_stack.left - margin_stack.right,
-    height_stack = 150 - margin_stack.top - margin_stack.bottom;
 
 // 设置x,y
 var x_stack = d3.scaleLinear().domain([0, 6400]).rangeRound([0, width_stack]); // 6400
@@ -123,17 +132,20 @@ var stack = svg_stack
     .attr("transform", "translate(" + margin_stack.left + "," + margin_stack.top + ")");
 
 
+
+
+
 //**********************Timeline**********************
-var margin_timeline = { top: 20, right: 0, bottom: 30, left: 20 },
-    width_timeline = 2400 - margin_timeline.left,
-    height_timeline = 100,
-    brushHeight = 20;
+var width_timeline = parseFloat(d3.select('#Div_timeline').style('width').slice(0, -2));
+var height_timeline = parseFloat(d3.select('#Div_timeline').style('height').slice(0, -2));
+var margin_timeline = { top: 0.1 * height_timeline, right: 0.01 * width_timeline, bottom: 0.3 * height_timeline, left: 0.01 * width_timeline };
+var brushHeight = 0.2 * height_timeline;
 
 const svg_timeline = d3
     .select("#Div_timeline")
     .append("svg")
-    .attr('width', width_timeline + margin_timeline.left)
-    .attr('height', height_timeline + margin_timeline.bottom)
+    .attr('width', width_timeline)
+    .attr('height', height_timeline)
 
 // 加入一个tooltip
 var div = d3
@@ -143,12 +155,13 @@ var div = d3
     .style("opacity", 0);
 
 
-//**********************Clusters**********************
-var size_clusters = 800; // Cluster画布宽, 可调参数, 其余参数自动计算
 
-var margin_clusters = { top: 50, right: 30, bottom: 50, left: 30 },
+//**********************Clusters**********************
+var size_clusters = parseFloat(d3.select('#Div_clusters').style('width').slice(0, -2));; // Cluster画布宽, 可调参数, 其余参数自动计算
+
+var margin_clusters = { top: 0.03 * size_clusters, right: 0.04 * size_clusters, bottom: 0.03 * size_clusters, left: 0.04 * size_clusters },
     width_clusters = size_clusters - margin_clusters.left - margin_clusters.right,
-    height_clusters = width_clusters / 8.5 // 默认cluster长宽 7:1
+    height_clusters = width_clusters / 9 // 默认cluster长宽 7:1
 
 var k = 6
 
@@ -173,10 +186,9 @@ var y_clusters = d3.scaleLinear()
 
 
 //**********************Space**********************    
-var width_space = 800,
-    height_space = 800;
-
-var margin_space = 20;
+var width_space = parseFloat(d3.select('#Div_space').style('width').slice(0, -2));
+var height_space = parseFloat(d3.select('#Div_space').style('height').slice(0, -2));
+var margin_space = { left: 0.05 * width_space, top: 0.05 * height_space };
 
 // 创建绘制Team Space的画布svg_space
 var svg_space = d3.select("#Div_space")
@@ -186,36 +198,34 @@ var svg_space = d3.select("#Div_space")
     .attr('height', height_space);
 
 // 创建比例尺scale
-var y_space = d3.scaleLinear().domain([0, 1]).range([0, height_space - 2 * margin_space]);
-var x_space = d3.scaleLinear().domain([0, 1]).range([0, width_space - 2 * margin_space]);
+var y_space = d3.scaleLinear().domain([0, 1]).range([0, height_space - 2 * margin_space.top]);
+var x_space = d3.scaleLinear().domain([0, 1]).range([0, width_space - 2 * margin_space.left]);
 
 // 绘制坐标轴
 svg_space.append("g")
-    .attr("transform", "translate(" + margin_space + "," + 0.5 * height_space + ")")
+    .attr("transform", "translate(" + margin_space.left + "," + 0.5 * height_space + ")")
     .call(d3.axisTop(x_space).ticks(10))
 
 svg_space.append("g")
-    .attr("transform", "translate(" + 0.5 * width_space + "," + margin_space + ")")
+    .attr("transform", "translate(" + 0.5 * width_space + "," + margin_space.top + ")")
     .call(d3.axisRight(y_space).ticks(10))
 
 
 //**********************Legend**********************
-d3.select("#Div_parallel")
+var width_legend = parseFloat(d3.select('#Div_legend').style('width').slice(0, -2));
+var height_legend = parseFloat(d3.select('#Div_legend').style('height').slice(0, -2));
+
+d3.select("#Div_legend")
     .append("svg")
     .attr('class', 'svg_legend')
-    .attr("width", 2400)
-    .attr("height", 50)
     .append('g')
 
 var legend_1 = {
     color: d3.scaleSequential([-25, 25], d3.interpolateRdYlBu),
     title: "Time from the pass(0):",
     id: ".svg_legend",
-    marginLeft: 30,
     ticks: 5,
     tickFormat: d => parseInt(d),
-    width: 500,
-    height: 50,
 };
 
 var legend_2 = {
@@ -223,19 +233,16 @@ var legend_2 = {
     title: "Clusters:",
     tickSize: 0,
     id: '.svg_legend',
-    marginLeft: 30,
     ticks: 5,
-    width: 500,
-    height: 50,
 };
 
 legend(legend_2)
 
 
 //**********************Parallel**********************
-var margin_parallel = { top: 30 * 2, right: 20 * 2, bottom: 10 * 2, left: 20 * 2 },
-    width_parallel = 2400,
-    height_parallel = 600;
+var width_parallel = parseFloat(d3.select('#Div_parallel').style('width').slice(0, -2));
+var height_parallel = parseFloat(d3.select('#Div_parallel').style('height').slice(0, -2));
+var margin_parallel = { top: 0.08 * height_parallel, bottom: 0.02 * height_parallel, left: 0.02 * width_parallel, right: 0.02 * width_parallel };
 
 var x_parallel = d3.scalePoint(),
     y_parallel = {},
@@ -245,14 +252,20 @@ var line = d3.line(),
     background,
     foreground;
 
+var tip = d3
+    .select("body")
+    .append("div")
+    .attr("class", "tip_parallel")
+    .style("opacity", 0);
+
 // 创建绘制平行坐标的画布svg_parallel
 var svg_parallel = d3.select("#Div_parallel")
     .append("svg")
     .attr('class', 'svg_parallel')
     .attr("width", width_parallel)
     .attr("height", height_parallel)
-    .append("g")
-    .attr("transform", "translate(" + margin_parallel.left + "," + margin_parallel.top + ")");
+    .append('g')
+    .attr("transform", "translate(" + margin_parallel.left + "," + margin_parallel.top + ")")
 
 function position(d) {
     var v = dragging[d];
@@ -285,8 +298,6 @@ function track(pass) {
         }
     })
 
-    //console.log(contexts)
-
     var map = d3.scalePoint().domain(contexts).range([0, 1])
 
     svg_space.append('g')
@@ -296,9 +307,9 @@ function track(pass) {
         .enter(0)
         .append('circle')
         .attr('class', 'track')
-        .attr('cx', d => x_space(d['left-right'] + margin_space))
-        .attr('cy', d => y_space(d['back-front'] + margin_space))
-        .attr('r', d => d.Y / 10)
+        .attr('cx', d => x_space(parseFloat(d['left-right'])) + margin_space.left)
+        .attr('cy', d => y_space(parseFloat(d['back-front'])) + margin_space.top)
+        .attr('r', d => d.Y / (50/width_space)/150)
         .attr('fill', d => d3.interpolateSpectral(map(d.Pass_ID)))
 };
 

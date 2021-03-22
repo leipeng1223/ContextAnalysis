@@ -2,143 +2,174 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 
 <style>
-  svg {
-    font: sans-serif;
-  }
+    #Div_menu {
+        position: absolute;
+        height: 5%;
+        width: 90%;
+        background-color: aliceblue;
+        left: 5%;
+    }
 
-  .svg_space {
-  }
+    #Div_stack {
+        position: absolute;
+        top: 8%;
+        height: 15%;
+        width: 90%;
+        background-color: ;
+        left: 5%;
+    }
 
-  .svg_cluster {
-  }
+    #Div_timeline {
+        position: absolute;
+        top: 23%;
+        height: 10%;
+        width: 90%;
+        background-color: ;
+        left: 5%;
+    }
 
-  .svg_timeline {
-  }
+    #Div_legend {
+        position: absolute;
+        top: 35%;
+        height: 8%;
+        width: 90%;
+        background-color:;
+        left: 5%;
+    }
 
-  .svg_stack {
-    background-color: aliceblue;
-  }
+    #Div_parallel {
+        position: absolute;
+        top: 43%;
+        height: 40%;
+        width: 90%;
+        background-color: ;
+        left: 5%;
+    }
 
-  .svg_histogram {
-  }
+    #Div_clusters {
+        position: absolute;
+        top: 85%;
+        height: 60%;
+        width: 30%;
+        left: 5%;
+        background-color: aliceblue;
+        left: 5%;
+    }
 
-  text {
-    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
-    cursor: move;
-  }
+    #Div_space {
+        position: absolute;
+        top: 85%;
+        left: 35%;
+        height: 60%;
+        width: 30%;
+        background-color:aliceblue;
+    }
 
-  .tick text {
-    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
-    cursor: move;
-    font-size: 15px;
-  }
+    #Div_histogram {
+        position: absolute;
+        top: 85%;
+        left: 65%;
+        height: 60%;
+        width: 30%;
+        background-color: aliceblue;
+    }
 
-  .select{
-    width: 150px;
-    height: 25px;
-    font-size: 20px;
-  }
+    .axis line,
+    .axis path {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
 
-
-  #panel {
-    width: 250px;
-    padding: 20px;
-    font-size: 25px;
-  }
-
-  #lower {
-    display: flex;
-  }
-
-  #Interface {
-    display: flex;
-  }
-
-  #Control_Left {
-    background-color: rgb(180, 220, 255);
-    margin-right: 10px;
-    margin-left: 10px;
-  }
-
-  /* background 是灰色背景线条 */
-  .background path {
+    .background path {
     fill: none;
     stroke: #ddd;
     shape-rendering: crispEdges;
   }
 
-  .brush .extent {
-    fill-opacity: 0.3;
-    stroke: #fff;
-    shape-rendering: crispEdges;
+  #panel {
+      display: flex;
   }
 
-  .axis line,
-  .axis path {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
+  .y_text {
+    cursor: move;
+    font-size:x-small;
   }
 
+  .select {
+    margin-left: 1%;
+    width: 8%;
+  }
+
+  .select_text {
+    margin-left: 5%;
+  }
+
+  
   div.tooltip {
     position: absolute;
     text-align: center;
-    width: 100px;
-    height: 40px;
+    width: 150px;
+    height: 60px;
     padding: 2px;
-    font: 12px sans-serif;
-    background: lightsteelblue;
+    font: 20px sans-serif;
+    background: aliceblue;
     border: 0px;
     border-radius: 8px;
     pointer-events: none;
   }
+
+  div.tip_parallel {
+    position: absolute;
+    text-align: center;
+    width: 500px;
+    height: 60px;
+    padding: 2px;
+    font: 20px sans-serif;
+    background: aliceblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+  }
+
+
 </style>
 
 
 <body>
-  <!-- 请使用v5版本d3.js -->
-  <script src="//d3js.org/d3.v5.min.js"></script>
 
-  <div id="Interface">
+    <div id='Div_menu'></div>
 
-    <div id="Control_Left"></div>
+    <div id='Div_stack'></div>
 
-    <div id="Main_Right">
-      <!-- Stack -->
-      <div id="Div_stack"></div>      
-      <!-- Timeline -->
-      <div id="Div_timeline"></div>
-      <!-- Legend -->
-      <div id="Div_legend"></div>
-      <!-- Parallel -->
-      <div id="Div_parallel"></div>
-      <!-- 下方视图 -->
-      <div id="lower">
-        <div id="Div_clusters"></div>
-        <div id="Div_space"></div>
-        <div id="Div_histogram"></div>
-      </div>
-    </div>
+    <div id='Div_timeline'></div>
 
-  </div>
-  <!-- 画legend的包 -->
-  <script type="text/javascript" src="d3_legend.js"></script>
-  <!-- 代码块(1)，包含与d3_data.csv相关的代码 -->
-  <script type="text/javascript" src="d3_read_data.js"></script>
-  <!-- 代码块(2)，包含与绑定数据无关的代码 -->
-  <script type="text/javascript" src="d3_basic_settings.js"></script>
-  <!-- 代码块(3)，包含与timeline相关的代码 -->
-  <script type="text/javascript" src="d3_timeline.js"></script>
+    <div id="Div_legend"></div>
+
+    <div id="Div_parallel"></div>
 
 
-  
+    <div id="Div_clusters"></div>
+    <div id="Div_space"></div>
+    <div id="Div_histogram"></div>
+
+    <script src="//d3js.org/d3.v5.min.js"></script>
+
+    <script type="text/javascript" src="d3_legend copy.js"></script>
+
+    <script type="text/javascript" src="d3_read_data copy.js"></script>
+
+    <script type="text/javascript" src="d3_timeline copy.js"></script>
+
+    <script type="text/javascript" src="d3_basic_settings copy.js"></script>
 </body>
+
 
 </html>

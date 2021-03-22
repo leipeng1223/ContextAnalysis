@@ -1,3 +1,4 @@
+
 d3.csv("d3_timeline.csv", ({ Pass_ID, time_past, BallPossession }) => ({
     Pass_ID: +Pass_ID,
     time_past: +time_past,
@@ -13,7 +14,7 @@ d3.csv("d3_timeline.csv", ({ Pass_ID, time_past, BallPossession }) => ({
     var x2 = d3
         .scaleLinear()
         .domain([0, width_timeline])
-        .range([0, 9.5 * width_timeline]);
+        .range([0, 9.8 * width_timeline]);
 
     svg_timeline.append('g')
         .attr('id', 'timeline')
@@ -26,13 +27,13 @@ d3.csv("d3_timeline.csv", ({ Pass_ID, time_past, BallPossession }) => ({
         .selectAll("circle")
         .data(data)
         .join("circle")
-        .attr("r", 5)
+        .attr("r", 0.05 * height_timeline)
         .attr("cx", (d, i) => x(d.time_past))
         .attr("cy", (d, i) => {
             if (d.BallPossession == 1.0) {
-                return 0.25 * height_timeline;
+                return 0.25 * (height_timeline - brushHeight);
             } else {
-                return 0.85 * height_timeline;
+                return 0.85 * (height_timeline - brushHeight);
             }
         })
         .attr("fill", (d, i) => {
@@ -54,10 +55,11 @@ d3.csv("d3_timeline.csv", ({ Pass_ID, time_past, BallPossession }) => ({
             div.transition().duration(500).style("opacity", 0);
         });
 
+
     var brushed = () => {
         const s = d3.event.selection
         d3.select("#barGroup").attr("transform", `translate(${-x2(s[0]) + margin_timeline.left}, 0)`); // #barGroup指上方点区域
-        d3.select("#timeline").attr("transform", `translate(${-x2(s[0]) + margin_timeline.left}, ${0.5 * height_timeline})`); // 坐标轴一起动
+        d3.select("#timeline").attr("transform", `translate(${-x2(s[0]) + margin_timeline.left}, ${0.5 * (height_timeline - brushHeight)})`); // 坐标轴一起动
     };
 
     var brush_timeline = d3.brushX()
@@ -72,14 +74,18 @@ d3.csv("d3_timeline.csv", ({ Pass_ID, time_past, BallPossession }) => ({
         .attr("class", "brush")
         .attr(
             "transform",
-            `translate(${margin_timeline.left}, ${height_timeline})` // 乱做的数据，之后再改
+            `translate(${margin_timeline.left}, ${(height_timeline - brushHeight)})` // 乱做的数据，之后再改
         )
         .call(brush_timeline)
         // brush.move就是人为设置一个现有的被刷选范围
         // 这里是设置brushGroup中的[0,200]这个坐标区间作为初始选中区间,使这个区间充当滑块
-        .call(brush_timeline.move, [0, 100]);
+        .call(brush_timeline.move, [0, 0.05 * width_timeline]);
 
     brushGroup.selectAll("rect").attr("height", brushHeight);
+
+
+
+
 
 
     var bins = histogram(data);

@@ -48,7 +48,7 @@ function Initialize(dataOption) {
             svg_clusters.append("g")
                 .attr('class', 'removable')
                 .attr("transform", "translate(" + (margin_clusters.left) + "," + (margin_clusters.top + 1.4 * i * height_clusters) + ")")
-                .call(d3.axisLeft(y_clusters).tickSize(-width_clusters).ticks(5).tickFormat(d => d-25))
+                .call(d3.axisLeft(y_clusters).tickSize(-width_clusters).ticks(3).tickValues([0, 25, 50]).tickFormat(d => d - 25))
                 .select('.domain').remove()
         }
 
@@ -126,7 +126,7 @@ function Initialize(dataOption) {
                 //   })
                 // )
                 .domain([0, 1])
-                .range([height_parallel - margin_parallel.top - margin_parallel.bottom, 0])
+                .range([0.8*height_parallel, 0])
         });
 
         // 画默认全cluster视图
@@ -141,7 +141,8 @@ function Initialize(dataOption) {
             205, 175, 1063, 1045, 795, 6, 758, 846, 915, 1167, 845,
             1033];
 
-        var sample = data.filter(function (d) {
+        var sample = data
+        .filter(function (d) {
             return sample_id.includes(parseInt(d.Pass_ID))
         })
 
@@ -239,14 +240,30 @@ function Initialize(dataOption) {
                 d3.select(this).call(d3.axisLeft(y_parallel[d]));
             })
 
+
         // 显示纵轴特征名称
         Ys.append("text")
-            .attr('class', 'removable')
-            .attr("x", -50)
-            .attr("y", -9)
+            .attr('class', 'removable y_text')
+            .attr("x", -0.02*width_parallel)
+            .attr("y", -0.03*height_parallel)
             .text(function (d) {
-                return d.slice(0, 20);
+                var l = d.split(' ');
+                if (l.length > 4) {
+                    l = l.slice(0, 4)
+                    l.push('...')
+                }
+                return l.join(' ');
             })
+            .on("mouseover", function (d) {
+                tip.transition().duration(200).style("opacity", 0.9);
+                tip
+                    .html(d)
+                    .style("left", d3.event.pageX - 110 + "px")
+                    .style("top", d3.event.pageY - 90 + "px");
+            })
+            .on("mouseout", function () {
+                tip.transition().duration(500).style("opacity", 0);
+            });
 
 
         // 纵轴刷选
