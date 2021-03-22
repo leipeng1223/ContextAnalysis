@@ -9,13 +9,14 @@ panel.append('svg').attr('height',50)
 // data选择框
 panel.append('div').append('text').text('Select the dataset you want to use:')
 var dataset = ["Team Right", "Team Left", 'Changed']
-var dropdownButton_data = panel.append('select')
+var dropdownButton_data = panel.append('select').attr('class', 'select')
 dropdownButton_data
     .selectAll('myOptions') // Next 4 lines add 6 options = 6 colors
     .data(dataset)
     .enter()
     .append('option')
     .text(function (d) { return d; }) // text showed in the menu
+    .style('font-size','20px')
     .attr("value", function (d) { return d; })
 
 function changeData(myOptions) {
@@ -34,13 +35,14 @@ panel.append('svg').attr('height',50)
 // parallel选择框
 panel.append('div').append('text').text('Select the cluster you want to show:')
 var c = ["All", "k0", "k1", "k2", "k3", "k4", "k5", "Clear"]
-var dropdownButton_cluster = panel.append('select')
+var dropdownButton_cluster = panel.append('select').attr('class', 'select')
 dropdownButton_cluster
     .selectAll('myOptions') // Next 4 lines add 6 options = 6 colors
     .data(c)
     .enter()
     .append('option')
     .text(function (d) { return d; }) // text showed in the menu
+    .style('font-size','20px')
     .attr("value", function (d) { return d; })
 
 function updateParallel(myOptions) {
