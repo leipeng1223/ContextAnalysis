@@ -46,11 +46,11 @@ dropdownButton_cluster
     .attr("value", function (d) { return d; })
 
 function updateParallel(myOptions) {
+    d3.selectAll('.parallel_lines').style("display", 'inline')
     d3.selectAll('.brushed_lines').remove()
     d3.selectAll('.track').remove()
     d3.selectAll('.brush_on_parallel').call(d3.brush().clear)
     d3.selectAll('.brush_on_clusters').call(d3.brush().clear)
-
 
     d3.select('.legend').remove()
     legend(legend_2)
