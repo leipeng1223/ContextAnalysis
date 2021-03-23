@@ -77,6 +77,7 @@ function Initialize(dataOption) {
         function brush_start() {
             d3.selectAll(".foreground path").attr('visibility', 'hidden');
             d3.selectAll('.brush_on_parallel').call(d3.brush().clear)
+            d3.selectAll('.track').remove()
         }
 
         function brushed_clusters() {
@@ -85,24 +86,18 @@ function Initialize(dataOption) {
             if (selection) {
                 pass = [];
                 id = [];
-                //let test = [];
                 const [[x0, y0], [x1, y1]] = selection;
-                //console.log(selection)
                 let value = dots.filter(function () {
                     var a = d3.select(this).attr('y')
                     var b = d3.select(this).attr('x')
                     return (x0 <= b && b < x1 && y0 <= a && a < y1)
                 }).data()
                 value.forEach(function (d) { id.push(d.id) })
-                //value.forEach(function(d){test.push(d.Y)})
-                //console.log(test)
-
                 data.forEach(function (d) {
                     if (id.includes(d.id)) {
                         pass.push(d)
                     }
                 })
-
                 draw(id);
                 track(pass);
             }
