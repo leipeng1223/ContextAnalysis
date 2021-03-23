@@ -41,7 +41,7 @@
         height: 50%;
         width: 25%;
         left: 10%;
-        background-color:;
+        background-color: ;
     }
 
     #Div_control {
@@ -59,27 +59,32 @@
         height: 50%;
         width: 25%;
         left: 65%;
-        background-color:;
+        background-color: ;
     }
 
     #Div_legend {
         position: absolute;
         display: flex;
-        top: 78%;
+        top: 128%;
         height: 8%;
         width: 80%;
-        background-color:;
+        background-color: ivory;
         left: 10%;
         margin-left: 1%
     }
 
     #Div_parallel {
+        padding-top:2%;
         position: absolute;
-        top: 86%;
+        top: 78%;
         height: 50%;
         width: 80%;
         background-color: ;
         left: 10%;
+    }
+
+    #panel {
+        margin: 3%;
     }
 
     .axis line,
@@ -90,47 +95,53 @@
     }
 
     .background path {
-    fill: none;
-    stroke: #ddd;
-    shape-rendering: crispEdges;
-  }
+        fill: none;
+        stroke: #ddd;
+        shape-rendering: crispEdges;
+    }
 
-  .y_text {
-    cursor: move;
-    font-size:x-small;
-  }
-  
-  div.tooltip {
-    position: absolute;
-    text-align: center;
-    width: 10%;
-    height: 7%;
-    padding: 2px;
-    font: small sans-serif;
-    background: aliceblue;
-    border: 0px;
-    border-radius: 8px;
-    pointer-events: none;
-  }
+    .y_text {
+        cursor: move;
+        font-size: x-small;
+    }
 
-  div.tip_parallel {
-    position: absolute;
-    text-align: center;
-    width: 15%;
-    height: 8%;
-    padding: 2px;
-    font: small sans-serif;
-    background: aliceblue;
-    border: 0px;
-    border-radius: 8px;
-    pointer-events: none;
-  }
+    .tick text {
+        font-size: xx-small;
+    }
 
-  .brushed_lines {
-      pointer-events: none;
-  }
+    #panel text {
+        font-size: small;
+    }
 
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        width: 10%;
+        height: 7%;
+        padding: 2px;
+        font: x-small sans-serif;
+        background: aliceblue;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
 
+    div.tip_parallel {
+        position: absolute;
+        text-align: center;
+        width: 10%;
+        height: 8%;
+        padding: 2px;
+        font: x-small sans-serif;
+        background: aliceblue;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
+
+    .brushed_lines {
+        pointer-events: none;
+    }
 </style>
 
 

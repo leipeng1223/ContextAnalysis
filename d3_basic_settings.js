@@ -52,14 +52,13 @@ dropdownButton_cluster
     .attr("value", function (d) { return d; })
 
 function updateParallel(myOptions) {
-    d3.selectAll('.parallel_lines').style("display", 'inline')
+    d3.selectAll('.parallel_lines').style("display", 'inline').attr('stroke', d => d.color_tsne_5000)
     d3.selectAll('.brushed_lines').remove()
     d3.selectAll('.track').remove()
     d3.selectAll('.brush_on_parallel').call(d3.brush().clear)
     d3.selectAll('.brush_on_clusters').call(d3.brush().clear)
 
     d3.select('.legend').remove()
-    legend(legend_2)
 
     if (myOptions == 'All') {
         d3.selectAll(".background path")
@@ -95,7 +94,7 @@ panel.append('div')
     .append('text')
     .text('Color the lines by:')
 
-var c = ["Clusters", "Time from Pass", 'Data Projection']
+var c = ['Data Projection', "Clusters", "Time from Pass"]
 var dropdownButton_color = panel.append('select')
 
 dropdownButton_color
@@ -112,15 +111,33 @@ dropdownButton_color.on("change", function (d) {
     var lines = d3.selectAll('.foreground path')
     if (selectedOption == 'Clusters') {
         lines.attr("stroke", d => cluster_color(d["k6"]))
+        d3.select('.legend').remove()
+        legend(legend_2)
     }
     else if (selectedOption == 'Time from Pass') {
         lines.attr("stroke", d => d3.interpolateRdYlBu((parseInt(d.Y) + 1) / 51))
+        d3.select('.legend').remove()
+        legend(legend_1)
     }
     else {
         lines.attr("stroke", d => d.color_tsne_5000)
+        d3.select('.legend').remove()
     }
+})
+
+var button_reset = panel.append('div').append('button').text('Reset')
+button_reset.on('click', reset);
+
+function reset() {
+    d3.selectAll(".foreground path").attr('visibility', 'visible').attr("stroke", d => d.color_tsne_5000);
+    d3.selectAll(".background path").attr('visibility', 'visible');
+    d3.selectAll(".brushed_lines").remove();
+    d3.selectAll('.parallel_lines').style("display", 'inline')
+    d3.selectAll('.track').remove()
+    d3.selectAll('.brush_on_parallel').call(d3.brush().clear)
+    d3.selectAll('.brush_on_clusters').call(d3.brush().clear)
+    d3.select('.legend').remove()
 }
-)
 
 
 //**********************Stack**********************
@@ -193,7 +210,7 @@ d3.select("#Div_legend")
 
 var legend_1 = {
     color: d3.scaleSequential([-25, 25], d3.interpolateRdYlBu),
-    title: "Time from the pass(0):",
+    title: "Time from pass:",
     id: ".svg_legend",
     ticks: 5,
     tickFormat: d => parseInt(d),
@@ -206,9 +223,6 @@ var legend_2 = {
     id: '.svg_legend',
     ticks: 5,
 };
-
-legend(legend_2)
-
 
 
 //**********************Parallel**********************
@@ -342,41 +356,24 @@ function track(pass) {
 };
 
 // 依照刷选绘制平行坐标图
-function draw(pass) {
+function draw(id) {
+    console.log(id)
     d3.selectAll(".foreground path").attr('visibility', 'hidden');
-    d3.selectAll(".brushed_lines").remove();
-    d3.selectAll('.brush_on_parallel').call(d3.brush().clear)
-    d3.select('.legend').remove()
-    legend(legend_1)
-
-    brushed_lines = svg_parallel
-        .append("g")
-        .attr("class", "removable brushed_lines")
-        .selectAll("path")
-        .data(pass)
-        .enter()
-        .append("path")
-        .attr("d", path)
-        .attr("class", "parallel_lines")
-        .attr("fill", "none")
-        .attr("shape-rendering", "crispEdges")
-        .attr("stroke", function (d) {
-            return d3.interpolateRdYlBu((parseInt(d.Y) + 1) / 51)
-        })
-        .attr("opacity", 0.7);
-
-    // 将y轴移到前方，避免被遮挡
-    d3.selectAll('.dimension').raise();
+    var s = d3.selectAll(".foreground path").filter(function (d) {
+        return id.includes(d.id)
+    })
+    console.log(s)
+    s.attr('visibility', 'visible')
 }
 
 
-//**********************Histogram**********************
-var svg_histogram = d3.select("#Div_histogram")
-    .append("svg")
-    .attr('class', 'svg_histogram')
-    .attr("width", 800)
-    .attr("height", 800)
+    //**********************Histogram**********************
+    var svg_histogram = d3.select("#Div_histogram")
+        .append("svg")
+        .attr('class', 'svg_histogram')
+        .attr("width", 800)
+        .attr("height", 800)
 
 
-//**********************初始化画布**********************
-Initialize("Team Right")
+    //**********************初始化画布**********************
+    Initialize("Team Right")

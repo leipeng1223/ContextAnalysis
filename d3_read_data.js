@@ -71,7 +71,13 @@ function Initialize(dataOption) {
 
         // 设置刷选
         var brush_clusters = d3.brush()
-            .on("start brush end", brushed_clusters)
+            .on('start', brush_start)
+            .on("brush end", brushed_clusters)
+
+        function brush_start() {
+            d3.selectAll(".foreground path").attr('visibility', 'hidden');
+            d3.selectAll('.brush_on_parallel').call(d3.brush().clear)
+        }
 
         function brushed_clusters() {
             // d3.brushSelection(this),获取当前刷子的刷选区域！！
@@ -97,7 +103,7 @@ function Initialize(dataOption) {
                     }
                 })
 
-                draw(pass);
+                draw(id);
                 track(pass);
             }
         }
@@ -130,20 +136,20 @@ function Initialize(dataOption) {
         });
 
         // 画默认全cluster视图
-        var sample_id = [117, 921, 129, 838, 475, 38, 532, 923, 58, 253, 286,
-            757, 556, 884, 650, 551, 1023, 919, 862, 555, 76, 1104,
-            974, 899, 250, 45, 1079, 1238, 247, 916, 646, 181, 956,
-            625, 660, 598, 1114, 561, 730, 680, 1109, 761, 718, 256,
-            637, 682, 417, 91, 849, 440, 106, 454, 449, 1222, 844,
-            306, 426, 53, 310, 681, 384, 1052, 90, 313, 770, 1035,
-            299, 99, 627, 1068, 343, 322, 388, 615, 1027, 39, 401,
-            803, 839, 1125, 754, 1234, 323, 430, 1232, 497, 107, 1216,
-            205, 175, 1063, 1045, 795, 6, 758, 846, 915, 1167, 845,
-            1033];
+        // var sample_id = [117, 921, 129, 838, 475, 38, 532, 923, 58, 253, 286,
+        //     757, 556, 884, 650, 551, 1023, 919, 862, 555, 76, 1104,
+        //     974, 899, 250, 45, 1079, 1238, 247, 916, 646, 181, 956,
+        //     625, 660, 598, 1114, 561, 730, 680, 1109, 761, 718, 256,
+        //     637, 682, 417, 91, 849, 440, 106, 454, 449, 1222, 844,
+        //     306, 426, 53, 310, 681, 384, 1052, 90, 313, 770, 1035,
+        //     299, 99, 627, 1068, 343, 322, 388, 615, 1027, 39, 401,
+        //     803, 839, 1125, 754, 1234, 323, 430, 1232, 497, 107, 1216,
+        //     205, 175, 1063, 1045, 795, 6, 758, 846, 915, 1167, 845,
+        //     1033];
 
         var sample = data
             .filter(function (d) {
-                return sample_id.includes(parseInt(d.Pass_ID))
+                return (d.Y%5 == 0)
             })
 
         // 背景灰色线条
@@ -171,9 +177,8 @@ function Initialize(dataOption) {
             .attr("class", (function (d) {
                 return ("k" + (d["k6"]) + " parallel_lines")
             }))
-            .attr("stroke", function (d) {
-                return cluster_color(d["k6"])
-            })
+            .attr('id', d => d.id)
+            .attr("stroke", d => d.color_tsne_5000)
             .attr("opacity", 0.5);
 
         // 把坐标轴等等全部放在折线后面再画
