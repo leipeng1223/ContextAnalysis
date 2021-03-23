@@ -41,13 +41,13 @@ function Initialize(dataOption) {
             // x轴
             svg_clusters.append("g")
                 .attr('class', 'removable')
-                .attr("transform", "translate(" + (margin_clusters.left) + "," + ((margin_clusters.top + height_clusters) + 1.4 * i * height_clusters) + ")")
+                .attr("transform", "translate(" + (margin_clusters.left) + "," + ((margin_clusters.top + height_cluster) + 1.4 * i * height_cluster) + ")")
                 .call(d3.axisBottom(x_clusters).ticks(10))
                 .select('.domain').remove()
             // y轴
             svg_clusters.append("g")
                 .attr('class', 'removable')
-                .attr("transform", "translate(" + (margin_clusters.left) + "," + (margin_clusters.top + 1.4 * i * height_clusters) + ")")
+                .attr("transform", "translate(" + (margin_clusters.left) + "," + (margin_clusters.top + 1.4 * i * height_cluster) + ")")
                 .call(d3.axisLeft(y_clusters).tickSize(-width_clusters).ticks(3).tickValues([0, 25, 50]).tickFormat(d => d - 25))
                 .select('.domain').remove()
         }
@@ -63,15 +63,15 @@ function Initialize(dataOption) {
             .append("rect")
             .attr('class', 'removable')
             .attr("width", width_clusters / m)
-            .attr("height", height_clusters / 50)
+            .attr("height", height_cluster / 50)
             .attr("x", function (d) { return x_clusters(d.order) + margin_clusters.left })
-            .attr("y", function (d) { return y_clusters(d.Y) + 1.4 * height_clusters * d.k6 + margin_clusters.top }) //cluster间距是1.3倍height_clusters
+            .attr("y", function (d) { return y_clusters(d.Y) + 1.4 * height_cluster * d.k6 + margin_clusters.top }) //cluster间距是1.3倍height_cluster
             .style("fill", function (d) { return d.color_tsne_5000 })
 
 
         // 设置刷选
         var brush_clusters = d3.brush()
-            .on("end", brushed_clusters)
+            .on("start brush end", brushed_clusters)
 
         function brushed_clusters() {
             // d3.brushSelection(this),获取当前刷子的刷选区域！！
@@ -145,10 +145,6 @@ function Initialize(dataOption) {
             .filter(function (d) {
                 return sample_id.includes(parseInt(d.Pass_ID))
             })
-
-        var cluster_color = d3.scaleOrdinal()
-            .domain(['0', '1', '2', '3', '4', '5'])
-            .range(d3.schemeSet2);
 
         // 背景灰色线条
         background = svg_parallel
@@ -259,7 +255,7 @@ function Initialize(dataOption) {
                 tip
                     .html(d)
                     .style("left", d3.event.pageX - 110 + "px")
-                    .style("top", d3.event.pageY -70 + "px");
+                    .style("top", d3.event.pageY - 70 + "px");
             })
             .on("mouseout", function () {
                 tip.transition().duration(500).style("opacity", 0);
@@ -273,7 +269,7 @@ function Initialize(dataOption) {
                 //console.log(d)
                 d3.select(this).call(
                     (y_parallel[d].brush = d3.brushY()
-                        .extent([[-0.015 * width_parallel, 0], [0.015 * width_parallel, height_parallel - margin_parallel.top - margin_parallel.bottom]])
+                        .extent([[-0.015 * width_parallel, 0], [0.015 * width_parallel, 0.8 * height_parallel]])
                         .on('end', brushed_parallel)
                     ))
             })

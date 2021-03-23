@@ -1,8 +1,11 @@
 id = []; // 全局变量id，用来筛选数据
 pass = []; // 全局变量pass，用来储存筛选出的数据
+var cluster_color = d3.scaleOrdinal()
+    .domain(['0', '1', '2', '3', '4', '5'])
+    .range(d3.schemeSet2);
 
 //**********************Control Panel**********************
-var panel = d3.select("#Div_menu").append('div').attr('id', 'panel')
+var panel = d3.select("#Div_control").append('div').attr('id', 'panel')
 
 // data选择框
 panel.append('div')
@@ -17,7 +20,7 @@ dropdownButton_data
     .enter()
     .append('option')
     .text(function (d) { return d; }) // text showed in the menu
-    .style('font-size', '20px')
+    //.style('font-size', '20px')
     .attr("value", function (d) { return d; })
 
 function changeData(myOptions) {
@@ -45,7 +48,7 @@ dropdownButton_cluster
     .enter()
     .append('option')
     .text(function (d) { return d; }) // text showed in the menu
-    .style('font-size', '20px')
+    //.style('font-size', '20px')
     .attr("value", function (d) { return d; })
 
 function updateParallel(myOptions) {
@@ -87,23 +90,49 @@ dropdownButton_cluster.on("change", function (d) {
     updateParallel(selectedOption)
 })
 
+panel.append('div')
+    .attr('class', 'select_text')
+    .append('text')
+    .text('Color the lines by:')
+
+var c = ["Clusters", "Time from Pass", 'Data Projection']
+var dropdownButton_color = panel.append('select')
+
+dropdownButton_color
+    .selectAll('myOptions') // Next 4 lines add 6 options = 6 colors
+    .data(c)
+    .enter()
+    .append('option')
+    .text(function (d) { return d; }) // text showed in the menu
+    //.style('font-size', '20px')
+    .attr("value", function (d) { return d; })
+
+dropdownButton_color.on("change", function (d) {
+    var selectedOption = d3.select(this).property("value")
+    var lines = d3.selectAll('.foreground path')
+    if (selectedOption == 'Clusters') {
+        lines.attr("stroke", d => cluster_color(d["k6"]))
+    }
+    else if (selectedOption == 'Time from Pass') {
+        lines.attr("stroke", d => d3.interpolateRdYlBu((parseInt(d.Y) + 1) / 51))
+    }
+    else {
+        lines.attr("stroke", d => d.color_tsne_5000)
+    }
+}
+)
+
 
 //**********************Stack**********************
-
-
 var width_stack = parseFloat(d3.select('#Div_stack').style('width').slice(0, -2));
 var height_stack = parseFloat(d3.select('#Div_stack').style('height').slice(0, -2)) / 2;
 var margin_stack = { top: 0.01 * height_stack, right: 0.01 * width_stack, bottom: 0.01 * height_stack, left: 0.01 * width_stack };
-
-console.log(height_stack)
-
 
 var svg_stack = d3.select("#Div_stack")
     .append("svg")
     .attr('class', 'svg_stack')
     .attr("width", width_stack)
     .attr("height", height_stack * 2)
-
 
 // 设置x,y
 var x_stack = d3.scaleLinear().domain([0, 6400]).rangeRound([0, width_stack]); // 6400
@@ -133,8 +162,6 @@ var stack = svg_stack
 
 
 
-
-
 //**********************Timeline**********************
 var width_timeline = parseFloat(d3.select('#Div_timeline').style('width').slice(0, -2));
 var height_timeline = parseFloat(d3.select('#Div_timeline').style('height').slice(0, -2));
@@ -156,61 +183,6 @@ var div = d3
 
 
 
-//**********************Clusters**********************
-var size_clusters = parseFloat(d3.select('#Div_clusters').style('width').slice(0, -2));; // Cluster画布宽, 可调参数, 其余参数自动计算
-
-var margin_clusters = { top: 0.03 * size_clusters, right: 0.05 * size_clusters, bottom: 0.03 * size_clusters, left: 0.05 * size_clusters },
-    width_clusters = size_clusters - margin_clusters.left - margin_clusters.right,
-    height_clusters = width_clusters / 9 // 默认cluster长宽 7:1
-
-var k = 6
-
-// 添加绘制Clusters的画布svg_clusters
-// 注意之后svg_cluster指svg里面那个用来画图的g
-var svg_clusters = d3.select("#Div_clusters")
-    .attr('class', 'svg_cluster')
-    .append("svg")
-    .attr("width", size_clusters)
-    .attr("height", 1.5 * height_clusters * k)
-    .append("g")
-    .attr('class', 'brush_on_clusters')
-// .attr("transform",
-//     "translate(" + margin_clusters.left + "," + margin_clusters.top + ")")
-
-// 创建比例尺scale
-
-var y_clusters = d3.scaleLinear()
-    .domain([0, 51])
-    .range([height_clusters, 0])
-    .nice()
-
-
-//**********************Space**********************    
-var width_space = parseFloat(d3.select('#Div_space').style('width').slice(0, -2));
-var height_space = parseFloat(d3.select('#Div_space').style('height').slice(0, -2));
-var margin_space = { left: 0.05 * width_space, top: 0.05 * height_space };
-
-// 创建绘制Team Space的画布svg_space
-var svg_space = d3.select("#Div_space")
-    .append('svg')
-    .attr('class', 'svg_space')
-    .attr('width', width_space)
-    .attr('height', height_space);
-
-// 创建比例尺scale
-var y_space = d3.scaleLinear().domain([0, 1]).range([0, height_space - 2 * margin_space.top]);
-var x_space = d3.scaleLinear().domain([0, 1]).range([0, width_space - 2 * margin_space.left]);
-
-// 绘制坐标轴
-svg_space.append("g")
-    .attr("transform", "translate(" + margin_space.left + "," + 0.5 * height_space + ")")
-    .call(d3.axisTop(x_space).ticks(10))
-
-svg_space.append("g")
-    .attr("transform", "translate(" + 0.5 * width_space + "," + margin_space.top + ")")
-    .call(d3.axisRight(y_space).ticks(10))
-
-
 //**********************Legend**********************
 var width_legend = parseFloat(d3.select('#Div_legend').style('width').slice(0, -2));
 var height_legend = parseFloat(d3.select('#Div_legend').style('height').slice(0, -2));
@@ -218,7 +190,6 @@ var height_legend = parseFloat(d3.select('#Div_legend').style('height').slice(0,
 d3.select("#Div_legend")
     .append("svg")
     .attr('class', 'svg_legend')
-    .append('g')
 
 var legend_1 = {
     color: d3.scaleSequential([-25, 25], d3.interpolateRdYlBu),
@@ -237,6 +208,7 @@ var legend_2 = {
 };
 
 legend(legend_2)
+
 
 
 //**********************Parallel**********************
@@ -286,6 +258,62 @@ function path(d) {
 }
 
 
+
+//**********************Clusters**********************
+var k = 6
+
+var height_cluster = parseFloat(d3.select('#Div_clusters').style('height').slice(0, -2)) / k / 1.5;
+var width_clusters = parseFloat(d3.select('#Div_clusters').style('width').slice(0, -2));
+
+var margin_clusters = { top: 0.03 * width_clusters, right: 0.05 * width_clusters, bottom: 0.03 * width_clusters, left: 0.05 * width_clusters };
+
+// 添加绘制Clusters的画布svg_clusters
+// 注意之后svg_cluster指svg里面那个用来画图的g
+var svg_clusters = d3.select("#Div_clusters")
+    .attr('class', 'svg_cluster')
+    .append("svg")
+    .attr("width", width_clusters)
+    .attr("height", 1.5 * height_cluster * k)
+    .append("g")
+    .attr('class', 'brush_on_clusters')
+// .attr("transform",
+//     "translate(" + margin_clusters.left + "," + margin_clusters.top + ")")
+
+// 创建比例尺scale
+
+var y_clusters = d3.scaleLinear()
+    .domain([0, 51])
+    .range([height_cluster, 0])
+    .nice()
+
+
+//**********************Space**********************    
+var width_space = parseFloat(d3.select('#Div_space').style('width').slice(0, -2));
+var height_space = parseFloat(d3.select('#Div_space').style('height').slice(0, -2));
+var margin_space = { left: 0.05 * width_space, top: 0.05 * height_space };
+
+// 创建绘制Team Space的画布svg_space
+var svg_space = d3.select("#Div_space")
+    .append('svg')
+    .attr('class', 'svg_space')
+    .attr('width', width_space)
+    .attr('height', height_space);
+
+// 创建比例尺scale
+var y_space = d3.scaleLinear().domain([0, 1]).range([0, height_space - 2 * margin_space.top]);
+var x_space = d3.scaleLinear().domain([0, 1]).range([0, width_space - 2 * margin_space.left]);
+
+// 绘制坐标轴
+svg_space.append("g")
+    .attr("transform", "translate(" + margin_space.left + "," + 0.5 * height_space + ")")
+    .call(d3.axisTop(x_space).ticks(10))
+
+svg_space.append("g")
+    .attr("transform", "translate(" + 0.5 * width_space + "," + margin_space.top + ")")
+    .call(d3.axisRight(y_space).ticks(10))
+
+
+
 //**********************Brush**********************
 // 依照刷选绘制足球轨迹
 function track(pass) {
@@ -309,7 +337,7 @@ function track(pass) {
         .attr('class', 'track')
         .attr('cx', d => x_space(parseFloat(d['left-right'])) + margin_space.left)
         .attr('cy', d => y_space(parseFloat(d['back-front'])) + margin_space.top)
-        .attr('r', d => d.Y / (50/width_space)/150)
+        .attr('r', d => d.Y / (50 / width_space) / 150)
         .attr('fill', d => d3.interpolateSpectral(map(d.Pass_ID)))
 };
 
@@ -336,6 +364,9 @@ function draw(pass) {
             return d3.interpolateRdYlBu((parseInt(d.Y) + 1) / 51)
         })
         .attr("opacity", 0.7);
+
+    // 将y轴移到前方，避免被遮挡
+    d3.selectAll('.dimension').raise();
 }
 
 

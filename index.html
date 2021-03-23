@@ -12,73 +12,74 @@
     #Div_menu {
         position: absolute;
         height: 5%;
-        width: 90%;
+        width: 80%;
         background-color: aliceblue;
-        left: 5%;
+        left: 10%;
     }
 
     #Div_stack {
         position: absolute;
         top: 8%;
-        height: 15%;
-        width: 90%;
+        height: 10%;
+        width: 80%;
         background-color: ;
-        left: 5%;
+        left: 10%;
     }
 
     #Div_timeline {
         position: absolute;
-        top: 23%;
+        top: 18%;
         height: 10%;
-        width: 90%;
+        width: 80%;
         background-color: ;
-        left: 5%;
-    }
-
-    #Div_legend {
-        position: absolute;
-        top: 35%;
-        height: 8%;
-        width: 90%;
-        background-color:;
-        left: 5%;
-    }
-
-    #Div_parallel {
-        position: absolute;
-        top: 43%;
-        height: 40%;
-        width: 90%;
-        background-color: ;
-        left: 5%;
+        left: 10%;
     }
 
     #Div_clusters {
         position: absolute;
-        top: 85%;
-        height: 60%;
+        top: 28%;
+        height: 50%;
+        width: 25%;
+        left: 10%;
+        background-color:;
+    }
+
+    #Div_control {
+        position: absolute;
+        top: 28%;
+        height: 50%;
         width: 30%;
-        left: 5%;
+        left: 35%;
         background-color: aliceblue;
-        left: 5%;
     }
 
     #Div_space {
         position: absolute;
-        top: 85%;
-        left: 35%;
-        height: 60%;
-        width: 30%;
-        background-color:aliceblue;
+        top: 28%;
+        height: 50%;
+        width: 25%;
+        left: 65%;
+        background-color:;
     }
 
-    #Div_histogram {
+    #Div_legend {
         position: absolute;
-        top: 85%;
-        left: 65%;
-        height: 60%;
-        width: 30%;
-        background-color: aliceblue;
+        display: flex;
+        top: 78%;
+        height: 8%;
+        width: 80%;
+        background-color:;
+        left: 10%;
+        margin-left: 1%
+    }
+
+    #Div_parallel {
+        position: absolute;
+        top: 86%;
+        height: 50%;
+        width: 80%;
+        background-color: ;
+        left: 10%;
     }
 
     .axis line,
@@ -94,24 +95,10 @@
     shape-rendering: crispEdges;
   }
 
-  #panel {
-      display: flex;
-  }
-
   .y_text {
     cursor: move;
     font-size:x-small;
   }
-
-  .select {
-    margin-left: 1%;
-    width: 8%;
-  }
-
-  .select_text {
-    margin-left: 5%;
-  }
-
   
   div.tooltip {
     position: absolute;
@@ -161,8 +148,10 @@
 
 
     <div id="Div_clusters"></div>
+
+    <div id="Div_control"></div>
+
     <div id="Div_space"></div>
-    <div id="Div_histogram"></div>
 
     <script src="//d3js.org/d3.v5.min.js"></script>
 
