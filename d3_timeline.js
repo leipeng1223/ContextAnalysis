@@ -33,7 +33,7 @@ d3.csv("d3_timeline.csv", ({ Pass_ID, time_past, BallPossession }) => ({
             if (d.BallPossession == 1.0) {
                 return 0.25 * (height_timeline - brushHeight);
             } else {
-                return 0.85 * (height_timeline - brushHeight);
+                return 0.90 * (height_timeline - brushHeight);
             }
         })
         .attr("fill", (d, i) => {
