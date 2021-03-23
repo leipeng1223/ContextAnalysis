@@ -34,7 +34,7 @@ function Initialize(dataOption) {
 
         var x_clusters = d3.scaleLinear()
             .domain([0, m])
-            .range([0, width_clusters-margin_clusters.left-margin_clusters.right])
+            .range([0, width_clusters - margin_clusters.left - margin_clusters.right])
 
         // 绘制坐标轴axis
         for (i = 0; i < k; i++) {
@@ -48,7 +48,7 @@ function Initialize(dataOption) {
             svg_clusters.append("g")
                 .attr('class', 'removable')
                 .attr("transform", "translate(" + (margin_clusters.left) + "," + (margin_clusters.top + 1.4 * i * height_cluster) + ")")
-                .call(d3.axisLeft(y_clusters).tickSize(-width_clusters+margin_clusters.right+margin_clusters.left).ticks(3).tickValues([0, 25, 50]).tickFormat(d => d - 25))
+                .call(d3.axisLeft(y_clusters).tickSize(-width_clusters + margin_clusters.right + margin_clusters.left).ticks(3).tickValues([0, 25, 50]).tickFormat(d => d - 25))
                 .select('.domain').remove()
         }
 
@@ -127,20 +127,8 @@ function Initialize(dataOption) {
                 //   })
                 // )
                 .domain([0, 1])
-                .range([height_parallel-margin_parallel.top-margin_parallel.bottom, 0])
+                .range([height_parallel - margin_parallel.top - margin_parallel.bottom, 0])
         });
-
-        // 画默认全cluster视图
-        // var sample_id = [117, 921, 129, 838, 475, 38, 532, 923, 58, 253, 286,
-        //     757, 556, 884, 650, 551, 1023, 919, 862, 555, 76, 1104,
-        //     974, 899, 250, 45, 1079, 1238, 247, 916, 646, 181, 956,
-        //     625, 660, 598, 1114, 561, 730, 680, 1109, 761, 718, 256,
-        //     637, 682, 417, 91, 849, 440, 106, 454, 449, 1222, 844,
-        //     306, 426, 53, 310, 681, 384, 1052, 90, 313, 770, 1035,
-        //     299, 99, 627, 1068, 343, 322, 388, 615, 1027, 39, 401,
-        //     803, 839, 1125, 754, 1234, 323, 430, 1232, 497, 107, 1216,
-        //     205, 175, 1063, 1045, 795, 6, 758, 846, 915, 1167, 845,
-        //     1033];
 
         var sample = data
             .filter(function (d) {
@@ -269,7 +257,7 @@ function Initialize(dataOption) {
                 //console.log(d)
                 d3.select(this).call(
                     (y_parallel[d].brush = d3.brushY()
-                        .extent([[-0.015 * width_parallel, 0], [0.015 * width_parallel, 0.8 * height_parallel]])
+                        .extent([[-0.015 * width_parallel, 0], [0.015 * width_parallel, height_parallel - margin_parallel.bottom - margin_parallel.top]])
                         .on('end', brushed_parallel)
                     ))
             })
@@ -284,8 +272,6 @@ function Initialize(dataOption) {
                     extents.push(t)
                 }
             })
-            //console.log(actives)
-            //console.log(extents)
             d3.selectAll('.parallel_lines').style("display", function (d) {
                 //console.log(d)
                 return actives.every(function (p, i) {
@@ -295,5 +281,9 @@ function Initialize(dataOption) {
                     : "none";
             });
         }
+        // var paths = d3.selectAll('.foreground path').filter(function (d) {
+        //     //////
+        // }).data()
+        // console.log(paths)
     });
 };
