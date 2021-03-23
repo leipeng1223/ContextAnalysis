@@ -360,12 +360,10 @@ function track(pass) {
 
 // 依照刷选绘制平行坐标图
 function draw(id) {
-    console.log(id)
     d3.selectAll(".foreground path").attr('visibility', 'hidden');
     var s = d3.selectAll(".foreground path").filter(function (d) {
         return id.includes(d.id)
     })
-    console.log(s)
     s.attr('visibility', 'visible')
 }
 

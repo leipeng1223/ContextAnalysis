@@ -63,7 +63,7 @@ function Initialize(dataOption) {
             .append("rect")
             .attr('class', 'removable')
             .attr("width", width_clusters / m)
-            .attr("height", height_cluster / 50)
+            .attr("height", height_cluster / 51)
             .attr("x", function (d) { return x_clusters(d.order) + margin_clusters.left })
             .attr("y", function (d) { return y_clusters(d.Y) + 1.4 * height_cluster * d.k6 + margin_clusters.top }) //cluster间距是1.3倍height_cluster
             .style("fill", function (d) { return d.color_tsne_5000 })
@@ -254,7 +254,6 @@ function Initialize(dataOption) {
         var brush_parallel = Ys.append("g")
             .attr("class", 'brush_on_parallel')
             .each(function (d) {
-                //console.log(d)
                 d3.select(this).call(
                     (y_parallel[d].brush = d3.brushY()
                         .extent([[-0.015 * width_parallel, 0], [0.015 * width_parallel, height_parallel - margin_parallel.bottom - margin_parallel.top]])
@@ -263,27 +262,39 @@ function Initialize(dataOption) {
             })
 
         function brushed_parallel() {
-            var actives = [];
-            var extents = [];
-            dimensions.forEach(function (item, index) {
-                var t = d3.brushSelection(brush_parallel._groups[0][index])
-                if (t != null) {
-                    actives.push(item);
-                    extents.push(t)
-                }
-            })
-            d3.selectAll('.parallel_lines').style("display", function (d) {
-                //console.log(d)
-                return actives.every(function (p, i) {
-                    return extents[i][0] <= y_parallel[p](d[p]) && y_parallel[p](d[p]) <= extents[i][1];
+            selection = d3.brushSelection(this);
+            if (selection) {
+                var actives = [];
+                var extents = [];
+                dimensions.forEach(function (item, index) {
+                    var t = d3.brushSelection(brush_parallel._groups[0][index])
+                    if (t != null) {
+                        actives.push(item);
+                        extents.push(t)
+                    }
                 })
-                    ? null
-                    : "none";
-            });
+                d3.selectAll('.parallel_lines').style("display", function (d) {
+                    return actives.every(function (p, i) {
+                        return extents[i][0] <= y_parallel[p](d[p]) && y_parallel[p](d[p]) <= extents[i][1];
+                    })
+                        ? null
+                        : "none";
+                })
+                var dt = [];
+                d3.selectAll('.parallel_lines')
+                    .filter(function () { return d3.select(this).style('display') != 'none' })
+                    .data()
+                    .forEach(function (d) {
+                        dt.push(d.id)
+                    })
+
+                dots.attr('stroke', function (d) {
+                    return dt.includes(d.id) ? 'white' : null
+                })
+            }
+            else {
+                dots.attr('stroke',null)
+            }
         }
-        // var paths = d3.selectAll('.foreground path').filter(function (d) {
-        //     //////
-        // }).data()
-        // console.log(paths)
     });
 };
