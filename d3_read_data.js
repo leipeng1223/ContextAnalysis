@@ -34,7 +34,7 @@ function Initialize(dataOption) {
 
         var x_clusters = d3.scaleLinear()
             .domain([0, m])
-            .range([0, width_clusters])
+            .range([0, width_clusters-margin_clusters.left-margin_clusters.right])
 
         // 绘制坐标轴axis
         for (i = 0; i < k; i++) {
@@ -48,7 +48,7 @@ function Initialize(dataOption) {
             svg_clusters.append("g")
                 .attr('class', 'removable')
                 .attr("transform", "translate(" + (margin_clusters.left) + "," + (margin_clusters.top + 1.4 * i * height_cluster) + ")")
-                .call(d3.axisLeft(y_clusters).tickSize(-width_clusters).ticks(3).tickValues([0, 25, 50]).tickFormat(d => d - 25))
+                .call(d3.axisLeft(y_clusters).tickSize(-width_clusters+margin_clusters.right+margin_clusters.left).ticks(3).tickValues([0, 25, 50]).tickFormat(d => d - 25))
                 .select('.domain').remove()
         }
 
@@ -72,7 +72,7 @@ function Initialize(dataOption) {
         // 设置刷选
         var brush_clusters = d3.brush()
             .on('start', brush_start)
-            .on("brush end", brushed_clusters)
+            .on("end", brushed_clusters)
 
         function brush_start() {
             d3.selectAll(".foreground path").attr('visibility', 'hidden');
@@ -127,7 +127,7 @@ function Initialize(dataOption) {
                 //   })
                 // )
                 .domain([0, 1])
-                .range([0.8 * height_parallel, 0])
+                .range([height_parallel-margin_parallel.top-margin_parallel.bottom, 0])
         });
 
         // 画默认全cluster视图
@@ -144,7 +144,7 @@ function Initialize(dataOption) {
 
         var sample = data
             .filter(function (d) {
-                return (d.Y%5 == 0)
+                return (d.Y % 5 == 0)
             })
 
         // 背景灰色线条

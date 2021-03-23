@@ -5,15 +5,17 @@ var cluster_color = d3.scaleOrdinal()
     .range(d3.schemeSet2);
 
 //**********************Control Panel**********************
-var panel = d3.select("#Div_control").append('div').attr('id', 'panel')
+var panel_1 = d3.select("#Div_menu").append('div').attr('id', 'panel_1')
+var panel_2 = d3.select("#Div_control").append('div').attr('id', 'panel_2')
 
 // data选择框
-panel.append('div')
+panel_1.append('div')
     .append('text')
-    .text('Select the dataset you want to use:')
+    .attr('class', 'select_text')
+    .text('Dataset:')
 
 var dataset = ["Team Right", "Team Left", 'Changed']
-var dropdownButton_data = panel.append('select').attr('class', 'select')
+var dropdownButton_data = panel_1.append('select').attr('class', 'select')
 dropdownButton_data
     .selectAll('myOptions') // Next 4 lines add 6 options = 6 colors
     .data(dataset)
@@ -24,6 +26,8 @@ dropdownButton_data
     .attr("value", function (d) { return d; })
 
 function changeData(myOptions) {
+    d3.selectAll('.brush_on_parallel').call(d3.brush().clear)
+    d3.selectAll('.brush_on_clusters').call(d3.brush().clear)
     Initialize(myOptions)
 }
 
@@ -34,14 +38,50 @@ dropdownButton_data.on("change", function (d) {
     changeData(selectedOption)
 })
 
-// parallel选择框
-panel.append('div')
-    .attr('class', 'select_text')
+
+panel_2.append('div')
     .append('text')
-    .text('Select the cluster you want to show:')
+    .attr('class', 'select_text')
+    .text('Color the lines by:')
+
+var c = ['Data Projection', "Clusters", "Time from Pass"]
+var dropdownButton_color = panel_2.append('select').attr('class', 'select')
+
+dropdownButton_color
+    .selectAll('myOptions') // Next 4 lines add 6 options = 6 colors
+    .data(c)
+    .enter()
+    .append('option')
+    .text(function (d) { return d; }) // text showed in the menu
+    //.style('font-size', '20px')
+    .attr("value", function (d) { return d; })
+
+dropdownButton_color.on("change", function (d) {
+    var selectedOption = d3.select(this).property("value")
+    var lines = d3.selectAll('.foreground path')
+    if (selectedOption == 'Clusters') {
+        lines.attr("stroke", d => cluster_color(d["k6"]))
+        d3.select('.legend').remove()
+        legend(legend_2)
+    }
+    else if (selectedOption == 'Time from Pass') {
+        lines.attr("stroke", d => d3.interpolateRdYlBu((parseInt(d.Y) + 1) / 51))
+        d3.select('.legend').remove()
+        legend(legend_1)
+    }
+    else {
+        lines.attr("stroke", d => d.color_tsne_5000)
+        d3.select('.legend').remove()
+    }
+})
+
+panel_2.append('div')
+    .append('text')
+    .attr('class', 'select_text')
+    .text('Clusters to show:')
 
 var c = ["All", "k0", "k1", "k2", "k3", "k4", "k5", "Clear"]
-var dropdownButton_cluster = panel.append('select').attr('class', 'select')
+var dropdownButton_cluster = panel_2.append('select').attr('class', 'select')
 dropdownButton_cluster
     .selectAll('myOptions') // Next 4 lines add 6 options = 6 colors
     .data(c)
@@ -89,43 +129,7 @@ dropdownButton_cluster.on("change", function (d) {
     updateParallel(selectedOption)
 })
 
-panel.append('div')
-    .attr('class', 'select_text')
-    .append('text')
-    .text('Color the lines by:')
-
-var c = ['Data Projection', "Clusters", "Time from Pass"]
-var dropdownButton_color = panel.append('select')
-
-dropdownButton_color
-    .selectAll('myOptions') // Next 4 lines add 6 options = 6 colors
-    .data(c)
-    .enter()
-    .append('option')
-    .text(function (d) { return d; }) // text showed in the menu
-    //.style('font-size', '20px')
-    .attr("value", function (d) { return d; })
-
-dropdownButton_color.on("change", function (d) {
-    var selectedOption = d3.select(this).property("value")
-    var lines = d3.selectAll('.foreground path')
-    if (selectedOption == 'Clusters') {
-        lines.attr("stroke", d => cluster_color(d["k6"]))
-        d3.select('.legend').remove()
-        legend(legend_2)
-    }
-    else if (selectedOption == 'Time from Pass') {
-        lines.attr("stroke", d => d3.interpolateRdYlBu((parseInt(d.Y) + 1) / 51))
-        d3.select('.legend').remove()
-        legend(legend_1)
-    }
-    else {
-        lines.attr("stroke", d => d.color_tsne_5000)
-        d3.select('.legend').remove()
-    }
-})
-
-var button_reset = panel.append('div').append('button').text('Reset')
+var button_reset = panel_2.append('div').append('button').text('Reset')
 button_reset.on('click', reset);
 
 function reset() {
@@ -138,7 +142,6 @@ function reset() {
     d3.selectAll('.brush_on_clusters').call(d3.brush().clear)
     d3.select('.legend').remove()
 }
-
 
 //**********************Stack**********************
 var width_stack = parseFloat(d3.select('#Div_stack').style('width').slice(0, -2));
@@ -228,7 +231,7 @@ var legend_2 = {
 //**********************Parallel**********************
 var width_parallel = parseFloat(d3.select('#Div_parallel').style('width').slice(0, -2));
 var height_parallel = parseFloat(d3.select('#Div_parallel').style('height').slice(0, -2));
-var margin_parallel = { top: 0.08 * height_parallel, bottom: 0.02 * height_parallel, left: 0.02 * width_parallel, right: 0.02 * width_parallel };
+var margin_parallel = { top: 0.1 * height_parallel, bottom: 0.02 * height_parallel, left: 0.02 * width_parallel, right: 0.02 * width_parallel };
 
 var x_parallel = d3.scalePoint(),
     y_parallel = {},
@@ -279,7 +282,7 @@ var k = 6
 var height_cluster = parseFloat(d3.select('#Div_clusters').style('height').slice(0, -2)) / k / 1.5;
 var width_clusters = parseFloat(d3.select('#Div_clusters').style('width').slice(0, -2));
 
-var margin_clusters = { top: 0.03 * width_clusters, right: 0.05 * width_clusters, bottom: 0.03 * width_clusters, left: 0.05 * width_clusters };
+var margin_clusters = { top: 0.02 * width_clusters, right: 0.03 * width_clusters, bottom: 0.02 * width_clusters, left: 0.03 * width_clusters };
 
 // 添加绘制Clusters的画布svg_clusters
 // 注意之后svg_cluster指svg里面那个用来画图的g
