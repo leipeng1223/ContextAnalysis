@@ -109,6 +109,14 @@ function Initialize(dataOption) {
                 draw(id);
                 track(pass);
                 highlight(pass_id);
+
+                console.log(pass_id)
+
+                var sssss = d3.selectAll('.timepoint').filter(function(d) {
+                    return pass_id.includes('' + d.Pass_ID)
+                })
+                console.log(sssss)
+                sssss.attr('fill','orange').transition(1000).attr('r', 0.15 * height_timeline)
             }
 
             else {
