@@ -367,14 +367,28 @@ function draw(id) {
     s.attr('visibility', 'visible')
 }
 
+function highlight(pass_id) {
+    d3.selectAll('.timepoint').attr("fill", (d, i) => {
+        if (d.BallPossession == 1.0) {
+            return "steelblue";
+        } else {
+            return "Crimson";
+        }
+    }).transition(1000).attr('r', 0.05 * height_timeline)
+    var s = d3.selectAll(".timepoint").filter(function (d) {
+        return pass_id.includes(d.Pass_ID)
+    })
+    s.transition(1000).attr('fill', 'orange').attr('r', 0.15 * height_timeline);
+}
 
-    //**********************Histogram**********************
-    var svg_histogram = d3.select("#Div_histogram")
-        .append("svg")
-        .attr('class', 'svg_histogram')
-        .attr("width", 800)
-        .attr("height", 800)
+
+//**********************Histogram**********************
+var svg_histogram = d3.select("#Div_histogram")
+    .append("svg")
+    .attr('class', 'svg_histogram')
+    .attr("width", 800)
+    .attr("height", 800)
 
 
-    //**********************初始化画布**********************
-    Initialize("Team Right")
+//**********************初始化画布**********************
+Initialize("Team Right")

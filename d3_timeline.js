@@ -27,6 +27,7 @@ d3.csv("d3_timeline.csv", ({ Pass_ID, time_past, BallPossession }) => ({
         .selectAll("circle")
         .data(data)
         .join("circle")
+        .attr('class','timepoint')
         .attr("r", 0.05 * height_timeline)
         .attr("cx", (d, i) => x(d.time_past))
         .attr("cy", (d, i) => {
@@ -123,11 +124,6 @@ d3.csv("d3_timeline.csv", ({ Pass_ID, time_past, BallPossession }) => ({
         }
     });
 
-    //console.log(result_left);
-    //console.log(result_right);
-    //console.log(d3.sum(result_left));
-    //console.log(d3.sum(result_right));
-
     // svg <- 条状图(左队)
     stack
         .append("g")
@@ -173,7 +169,7 @@ d3.csv("d3_timeline.csv", ({ Pass_ID, time_past, BallPossession }) => ({
     stack
         .append("g")
         .attr("transform", "translate(0," + height_stack + ")")
-        .call(d3.axisBottom(x_stack));
+        .call(d3.axisBottom(x_stack).tickFormat(d => Math.round(d / 60) + "min" + Math.round(d % 60) + "s"));
 
     // // // 加入y轴
     // svg.append("g").call(d3.axisLeft(y1_stack));

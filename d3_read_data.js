@@ -86,13 +86,20 @@ function Initialize(dataOption) {
             if (selection) {
                 pass = [];
                 id = [];
+                pass_id = [];
                 const [[x0, y0], [x1, y1]] = selection;
                 let value = dots.filter(function () {
                     var a = d3.select(this).attr('y')
                     var b = d3.select(this).attr('x')
                     return (x0 <= b && b < x1 && y0 <= a && a < y1)
                 }).data()
-                value.forEach(function (d) { id.push(d.id) })
+                value.forEach(function (d) {
+                    id.push(d.id);
+                    if (!pass_id.includes(+d.Pass_ID)) {
+                        pass_id.push(+d.Pass_ID);
+                    }
+                })
+
                 data.forEach(function (d) {
                     if (id.includes(d.id)) {
                         pass.push(d)
@@ -100,6 +107,17 @@ function Initialize(dataOption) {
                 })
                 draw(id);
                 track(pass);
+                highlight(pass_id);
+            }
+            else {
+                d3.selectAll('.track').remove()
+                d3.selectAll('.timepoint').attr("fill", (d, i) => {
+                    if (d.BallPossession == 1.0) {
+                        return "steelblue";
+                    } else {
+                        return "Crimson";
+                    }
+                }).transition(1000).attr('r', 0.05 * height_timeline)
             }
         }
 
@@ -293,7 +311,7 @@ function Initialize(dataOption) {
                 })
             }
             else {
-                dots.attr('stroke',null)
+                dots.attr('stroke', null)
             }
         }
     });
