@@ -290,10 +290,11 @@ function Initialize(dataOption) {
         function brushed_parallel() {
             var actives = [];
             var extents = [];
+            // drag会改变轴的顺序，所以brush会错位。这里修改之后解决了这个bug。
             dimensions.forEach(function (item, index) {
                 var t = d3.brushSelection(brush_parallel._groups[0][index])
                 if (t != null) {
-                    actives.push(item);
+                    actives.push(brush_parallel.data()[index]); // 不再push item而是返回正确的对应坐标轴名称
                     extents.push(t)
                 }
             })
