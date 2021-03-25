@@ -141,6 +141,7 @@ function reset() {
     d3.selectAll('.brush_on_parallel').call(d3.brush().clear)
     d3.selectAll('.brush_on_clusters').call(d3.brush().clear)
     d3.select('.legend').remove()
+    dots.attr('opacity', 1)
 }
 
 //**********************Stack**********************
@@ -336,16 +337,8 @@ svg_space.append("g")
 function track(pass) {
     d3.selectAll(".track").remove()
 
-    var contexts = [];
-    pass.forEach(function (d) {
-        if (!contexts.includes(d.Pass_ID)) {
-            contexts.push(d.Pass_ID)
-        }
-    })
-
-    var map = d3.scalePoint().domain(contexts).range([0, 1])
-
-    svg_space.append('g')
+    //var map = d3.scalePoint().domain(pass_id).range([0, 1])
+    tracks = svg_space.append('g')
         .attr('class', 'removable team_space')
         .selectAll('circle')
         .data(pass)
@@ -355,7 +348,7 @@ function track(pass) {
         .attr('cx', d => x_space(parseFloat(d['left-right'])) + margin_space.left)
         .attr('cy', d => y_space(parseFloat(d['back-front'])) + margin_space.top)
         .attr('r', d => d.Y / (50 / width_space) / 150)
-        .attr('fill', d => d3.interpolateSpectral(map(d.Pass_ID)))
+        .attr('fill', d => d.color_tsne_5000);
 };
 
 // 依照刷选绘制平行坐标图

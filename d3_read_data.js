@@ -22,6 +22,8 @@ function Initialize(dataOption) {
     // 读入数据集
     d3.csv(dtset).then(function (data) {
 
+        var sample = data.filter(d => d.Y % 5 == 0);
+
         //********************Clusters*********************
 
         // 获取data的部分重要参数(本部分可考虑直接从python传递?)
@@ -58,12 +60,12 @@ function Initialize(dataOption) {
         // 绘制色块
         dots = svg_clusters.append('g')
             .selectAll("rect")
-            .data(data)
+            .data(sample)
             .enter()
             .append("rect")
             .attr('class', 'removable')
             .attr("width", width_clusters / m)
-            .attr("height", height_cluster / 51)
+            .attr("height", height_cluster / 11)
             .attr("x", function (d) { return x_clusters(d.order) + margin_clusters.left })
             .attr("y", function (d) { return y_clusters(d.Y) + 1.4 * height_cluster * d.k6 + margin_clusters.top }) //cluster间距是1.3倍height_cluster
             .style("fill", function (d) { return d.color_tsne_5000 })
@@ -84,9 +86,9 @@ function Initialize(dataOption) {
             // d3.brushSelection(this),获取当前刷子的刷选区域！！
             selection = d3.brushSelection(this);
             if (selection) {
-                pass = [];
                 id = [];
                 pass_id = [];
+                pass = [];
                 const [[x0, y0], [x1, y1]] = selection;
                 let value = dots.filter(function () {
                     var a = d3.select(this).attr('y')
@@ -95,13 +97,12 @@ function Initialize(dataOption) {
                 }).data()
                 value.forEach(function (d) {
                     id.push(d.id);
-                    if (!pass_id.includes(+d.Pass_ID)) {
-                        pass_id.push(+d.Pass_ID);
+                    if (!pass_id.includes(d.Pass_ID)) {
+                        pass_id.push(d.Pass_ID);
                     }
                 })
-
                 data.forEach(function (d) {
-                    if (id.includes(d.id)) {
+                    if (pass_id.includes(d.Pass_ID)) {
                         pass.push(d)
                     }
                 })
@@ -109,8 +110,10 @@ function Initialize(dataOption) {
                 track(pass);
                 highlight(pass_id);
             }
+
             else {
                 d3.selectAll('.track').remove()
+
                 d3.selectAll('.timepoint').attr("fill", (d, i) => {
                     if (d.BallPossession == 1.0) {
                         return "steelblue";
@@ -118,6 +121,8 @@ function Initialize(dataOption) {
                         return "Crimson";
                     }
                 }).transition(1000).attr('r', 0.05 * height_timeline)
+
+                foreground.attr('visibility', 'visible')
             }
         }
 
@@ -147,11 +152,6 @@ function Initialize(dataOption) {
                 .domain([0, 1])
                 .range([height_parallel - margin_parallel.top - margin_parallel.bottom, 0])
         });
-
-        var sample = data
-            .filter(function (d) {
-                return (d.Y % 5 == 0)
-            })
 
         // 背景灰色线条
         background = svg_parallel
@@ -275,44 +275,50 @@ function Initialize(dataOption) {
                 d3.select(this).call(
                     (y_parallel[d].brush = d3.brushY()
                         .extent([[-0.015 * width_parallel, 0], [0.015 * width_parallel, height_parallel - margin_parallel.bottom - margin_parallel.top]])
-                        .on('end', brushed_parallel)
+                        .on('start end', brushed_parallel)
                     ))
             })
 
         function brushed_parallel() {
-            selection = d3.brushSelection(this);
-            if (selection) {
-                var actives = [];
-                var extents = [];
-                dimensions.forEach(function (item, index) {
-                    var t = d3.brushSelection(brush_parallel._groups[0][index])
-                    if (t != null) {
-                        actives.push(item);
-                        extents.push(t)
-                    }
+            var actives = [];
+            var extents = [];
+            dimensions.forEach(function (item, index) {
+                var t = d3.brushSelection(brush_parallel._groups[0][index])
+                if (t != null) {
+                    actives.push(item);
+                    extents.push(t)
+                }
+            })
+            d3.selectAll('.parallel_lines').style("display", function (d) {
+                return actives.every(function (p, i) {
+                    return extents[i][0] <= y_parallel[p](d[p]) && y_parallel[p](d[p]) <= extents[i][1];
                 })
-                d3.selectAll('.parallel_lines').style("display", function (d) {
-                    return actives.every(function (p, i) {
-                        return extents[i][0] <= y_parallel[p](d[p]) && y_parallel[p](d[p]) <= extents[i][1];
-                    })
-                        ? null
-                        : "none";
+                    ? null
+                    : "none";
+            })
+            var dt = [];
+            d3.selectAll('.parallel_lines')
+                .filter(function () { return d3.select(this).style('display') != 'none' })
+                .data()
+                .forEach(function (d) {
+                    dt.push(d.id)
                 })
-                var dt = [];
-                d3.selectAll('.parallel_lines')
-                    .filter(function () { return d3.select(this).style('display') != 'none' })
-                    .data()
-                    .forEach(function (d) {
-                        dt.push(d.id)
-                    })
 
-                dots.attr('stroke', function (d) {
-                    return dt.includes(d.id) ? 'white' : null
-                })
-            }
-            else {
-                dots.attr('stroke', null)
-            }
+            dots.attr('opacity', function (d) {
+                return dt.includes(d.id) ? 1 : 0.2
+            })
+
+            // dots.attr('opacity', (function (d) {
+            //     return actives.every(function (p, i) {
+            //         return y_parallel[p].invert(extents[i][0]) >= +d[p] && +d[p] >= y_parallel[p].invert(extents[i][1]);
+            //     })
+            //         ? 1
+            //         : 0.2
+            // }))
+            // }
+            // else {
+            //     dots.attr('stroke', null);
+            // }
         }
     });
 };
