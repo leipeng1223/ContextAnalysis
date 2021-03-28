@@ -5,6 +5,16 @@ function Initialize(dataOption) {
     // 选择数据集
     var dtset = '';
     var m = 0;
+    var k = 6;
+    var domain1 = -25;
+    var domain2 = 25;
+    var xxx = 'left-right';
+    var yyy = 'back-front';
+    var tickvalues = [-25, 0, 25];
+    r = 25;
+    var slice1 = 2;
+    var slice2 = 11;
+
     if (dataOption == 'Team Left') {
         dtset = 'd3_data_left.csv';
         m = 180;
@@ -12,6 +22,18 @@ function Initialize(dataOption) {
     else if (dataOption == 'Team Right') {
         dtset = 'd3_data_right.csv';
         m = 35;
+    }
+    else if (dataOption == 'Driving') {
+        dtset = 'd3_data_driver_2.csv';
+        m = 160;
+        domain1 = -5;
+        domain2 = 5;
+        xxx = 'latitude';
+        yyy = 'longitude';
+        tickvalues = [-5, 0, 5];
+        r = 5
+        slice1 = 0;
+        slice2 = 6;
     }
     else {
         dtset = 'd3_data_changed.csv';
@@ -21,8 +43,12 @@ function Initialize(dataOption) {
 
     // 读入数据集
     d3.csv(dtset).then(function (data) {
-
-        var sample = data.filter(d => d.Y % 5 == 0);
+        if (dataOption == 'Driving') {
+            var sample = data
+        }
+        else {
+            var sample = data.filter(d => d.Y % 5 == 0);
+        }
 
         //********************Clusters*********************
 
@@ -34,6 +60,31 @@ function Initialize(dataOption) {
         // })
         // var k = d3.max(cluster_number) + 1;
 
+        var height_cluster = parseFloat(d3.select('#Div_clusters').style('height').slice(0, -2)) / k / 1.8;
+        var width_clusters = parseFloat(d3.select('#Div_clusters').style('width').slice(0, -2));
+
+        var margin_clusters = { top: 0.02 * width_clusters, right: 0.03 * width_clusters, bottom: 0.02 * width_clusters, left: 0.03 * width_clusters };
+
+        // 添加绘制Clusters的画布svg_clusters
+        // 注意之后svg_cluster指svg里面那个用来画图的g
+        var svg_clusters = d3.select("#Div_clusters")
+            .attr('class', 'svg_cluster')
+            .append("svg")
+            .attr('class', 'removable')
+            .attr("width", width_clusters)
+            .attr("height", 1.8 * height_cluster * k)
+            .append("g")
+            .attr('class', 'brush_on_clusters')
+        // .attr("transform",
+        //     "translate(" + margin_clusters.left + "," + margin_clusters.top + ")")
+
+        // 创建比例尺scale
+
+        var y_clusters = d3.scaleLinear()
+            .domain([domain1, domain2])
+            .range([height_cluster, 0])
+            .nice()
+
         var x_clusters = d3.scaleLinear()
             .domain([0, m])
             .range([0, width_clusters - margin_clusters.left - margin_clusters.right])
@@ -43,14 +94,14 @@ function Initialize(dataOption) {
             // x轴
             svg_clusters.append("g")
                 .attr('class', 'removable')
-                .attr("transform", "translate(" + (margin_clusters.left) + "," + ((margin_clusters.top + height_cluster) + 1.4 * i * height_cluster) + ")")
+                .attr("transform", "translate(" + (margin_clusters.left) + "," + ((margin_clusters.top + height_cluster) + 1.6 * i * height_cluster) + ")")
                 .call(d3.axisBottom(x_clusters).ticks(10))
                 .select('.domain').remove()
             // y轴
             svg_clusters.append("g")
                 .attr('class', 'removable')
-                .attr("transform", "translate(" + (margin_clusters.left) + "," + (margin_clusters.top + 1.4 * i * height_cluster) + ")")
-                .call(d3.axisLeft(y_clusters).tickSize(-width_clusters + margin_clusters.right + margin_clusters.left).ticks(3).tickValues([0, 25, 50]).tickFormat(d => d - 25))
+                .attr("transform", "translate(" + (margin_clusters.left) + "," + (margin_clusters.top + 1.6 * i * height_cluster) + ")")
+                .call(d3.axisLeft(y_clusters).tickSize(-width_clusters + margin_clusters.right + margin_clusters.left).ticks(3).tickValues(tickvalues))
                 .select('.domain').remove()
         }
 
@@ -67,7 +118,7 @@ function Initialize(dataOption) {
             .attr("width", width_clusters / m)
             .attr("height", height_cluster / 11)
             .attr("x", function (d) { return x_clusters(d.order) + margin_clusters.left })
-            .attr("y", function (d) { return y_clusters(d.Y) + 1.4 * height_cluster * d.k6 + margin_clusters.top }) //cluster间距是1.3倍height_cluster
+            .attr("y", function (d) { return y_clusters(d.Y) + 1.6 * height_cluster * d.k6 + margin_clusters.top }) //cluster间距是1.3倍height_cluster
             .style("fill", function (d) { return d.color_tsne_5000 })
 
 
@@ -107,16 +158,14 @@ function Initialize(dataOption) {
                     }
                 })
                 draw(id);
-                track(pass);
+                track(pass, xxx, yyy, r);
                 highlight(pass_id);
 
-                console.log(pass_id)
-
-                var sssss = d3.selectAll('.timepoint').filter(function(d) {
+                var sssss = d3.selectAll('.timepoint').filter(function (d) {
                     return pass_id.includes('' + d.Pass_ID)
                 })
-                console.log(sssss)
-                sssss.attr('fill','orange').transition(1000).attr('r', 0.15 * height_timeline)
+
+                sssss.attr('fill', 'orange').transition(1000).attr('r', 0.15 * height_timeline)
             }
 
             else {
@@ -143,7 +192,7 @@ function Initialize(dataOption) {
         // 获得要画的维度名称
         // 这里不为dimensions声明var，函数外还要用到
         // （不特别声明的就是全局变量）
-        dimensions = d3.keys(data[0]).slice(2, 11);
+        dimensions = d3.keys(data[0]).slice(slice1,slice2);
 
         // 创建横轴比例尺
         x_parallel.domain(dimensions)

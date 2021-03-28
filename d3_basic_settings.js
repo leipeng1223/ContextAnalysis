@@ -14,7 +14,7 @@ panel_1.append('div')
     .attr('class', 'select_text')
     .text('Dataset:')
 
-var dataset = ["Team Right", "Team Left", 'Changed']
+var dataset = ["Team Right", "Team Left", 'Changed', 'Driving']
 var dropdownButton_data = panel_1.append('select').attr('class', 'select')
 dropdownButton_data
     .selectAll('myOptions') // Next 4 lines add 6 options = 6 colors
@@ -44,7 +44,7 @@ panel_2.append('div')
     .attr('class', 'select_text')
     .text('Color the lines by:')
 
-var c = ['Data Projection', "Clusters", "Time from Pass"]
+var c = ['Data Projection', "Clusters", "Time from Event"]
 var dropdownButton_color = panel_2.append('select').attr('class', 'select')
 
 dropdownButton_color
@@ -64,8 +64,8 @@ dropdownButton_color.on("change", function (d) {
         d3.select('.legend').remove()
         legend(legend_2)
     }
-    else if (selectedOption == 'Time from Pass') {
-        lines.attr("stroke", d => d3.interpolateRdYlBu((parseInt(d.Y) + 1) / 51))
+    else if (selectedOption == 'Time from Event') {
+        lines.attr("stroke", d => d3.interpolateRdYlBu((parseInt(d.Y) + r + 1) / (2*r+1)))
         d3.select('.legend').remove()
         legend(legend_1)
     }
@@ -214,7 +214,7 @@ d3.select("#Div_legend")
 
 var legend_1 = {
     color: d3.scaleSequential([-25, 25], d3.interpolateRdYlBu),
-    title: "Time from pass:",
+    title: "Time from Event:",
     id: ".svg_legend",
     ticks: 5,
     tickFormat: d => parseInt(d),
@@ -278,31 +278,31 @@ function path(d) {
 
 
 //**********************Clusters**********************
-var k = 6
+// var k = 6
 
-var height_cluster = parseFloat(d3.select('#Div_clusters').style('height').slice(0, -2)) / k / 1.5;
-var width_clusters = parseFloat(d3.select('#Div_clusters').style('width').slice(0, -2));
+// var height_cluster = parseFloat(d3.select('#Div_clusters').style('height').slice(0, -2)) / k / 1.5;
+// var width_clusters = parseFloat(d3.select('#Div_clusters').style('width').slice(0, -2));
 
-var margin_clusters = { top: 0.02 * width_clusters, right: 0.03 * width_clusters, bottom: 0.02 * width_clusters, left: 0.03 * width_clusters };
+// var margin_clusters = { top: 0.02 * width_clusters, right: 0.03 * width_clusters, bottom: 0.02 * width_clusters, left: 0.03 * width_clusters };
 
-// 添加绘制Clusters的画布svg_clusters
-// 注意之后svg_cluster指svg里面那个用来画图的g
-var svg_clusters = d3.select("#Div_clusters")
-    .attr('class', 'svg_cluster')
-    .append("svg")
-    .attr("width", width_clusters)
-    .attr("height", 1.5 * height_cluster * k)
-    .append("g")
-    .attr('class', 'brush_on_clusters')
-// .attr("transform",
-//     "translate(" + margin_clusters.left + "," + margin_clusters.top + ")")
+// // 添加绘制Clusters的画布svg_clusters
+// // 注意之后svg_cluster指svg里面那个用来画图的g
+// var svg_clusters = d3.select("#Div_clusters")
+//     .attr('class', 'svg_cluster')
+//     .append("svg")
+//     .attr("width", width_clusters)
+//     .attr("height", 1.5 * height_cluster * k)
+//     .append("g")
+//     .attr('class', 'brush_on_clusters')
+// // .attr("transform",
+// //     "translate(" + margin_clusters.left + "," + margin_clusters.top + ")")
 
-// 创建比例尺scale
+// // 创建比例尺scale
 
-var y_clusters = d3.scaleLinear()
-    .domain([0, 51])
-    .range([height_cluster, 0])
-    .nice()
+// var y_clusters = d3.scaleLinear()
+//     .domain([0, 51])
+//     .range([height_cluster, 0])
+//     .nice()
 
 
 //**********************Space**********************    
@@ -334,7 +334,7 @@ svg_space.append("g")
 
 //**********************Brush**********************
 // 依照刷选绘制足球轨迹
-function track(pass) {
+function track(pass, xxx, yyy, range) {
     d3.selectAll(".track").remove()
 
     //var map = d3.scalePoint().domain(pass_id).range([0, 1])
@@ -345,9 +345,9 @@ function track(pass) {
         .enter(0)
         .append('circle')
         .attr('class', 'track')
-        .attr('cx', d => x_space(parseFloat(d['left-right'])) + margin_space.left)
-        .attr('cy', d => y_space(parseFloat(d['back-front'])) + margin_space.top)
-        .attr('r', d => d.Y / (50 / width_space) / 150)
+        .attr('cx', d => x_space(parseFloat(d[xxx])) + margin_space.left)
+        .attr('cy', d => y_space(parseFloat(d[yyy])) + margin_space.top)
+        .attr('r', d => (+d.Y+range+1) / (2*range) * width_space / 150)
         .attr('fill', d => d.color_tsne_5000);
 };
 
